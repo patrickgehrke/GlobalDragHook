@@ -36,12 +36,12 @@ namespace GlobalDragHook.DragMonitorHook
         {
             _server.IsInstalled(RemoteHooking.GetCurrentProcessId());
 
-            var createFileHook = LocalHook.Create(LocalHook.GetProcAddress("Ole32.dll", "DoDragDrop"),
+            var doDragDropHook = LocalHook.Create(LocalHook.GetProcAddress("Ole32.dll", "DoDragDrop"),
                                                   new DoDrag_Hook(DoDragDrop_Hook),
                                                   this);
 
             // Activate hooks on all threads except the current thread
-            createFileHook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
+            doDragDropHook.ThreadACL.SetExclusiveACL(new Int32[] { 0 });
             _server.ReportMessage(RemoteHooking.GetCurrentProcessId(), "DoDragDrop hook installed");
 
             try
@@ -74,7 +74,7 @@ namespace GlobalDragHook.DragMonitorHook
             }
 
             // Remove hooks
-            createFileHook.Dispose();
+            doDragDropHook.Dispose();
 
             // Finalise cleanup of hooks
             LocalHook.Release();
